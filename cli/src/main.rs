@@ -1,32 +1,40 @@
-use std::net::{Ipv4Addr, SocketAddrV4};
+use std::{
+    net::{Ipv4Addr, SocketAddrV4},
+    path::{Path, PathBuf},
+};
 
+use api::{GetRootDir, server_state::ServerState};
 use axum::{
     Router,
     body::Body,
-    http::{HeaderValue, StatusCode, header},
+    extract::State,
+    http::{HeaderValue, Request, StatusCode, header},
     response::{IntoResponse, Response},
-    routing::get,
+    routing::{get, post},
 };
 use clap::Parser;
+
+use leptos::{prelude::provide_context, server_fn::axum::register_explicit};
+use leptos_axum::handle_server_fns_with_context;
 use rust_embed::Embed;
 use tokio::signal;
 
-#[allow(dead_code)]
-#[derive(Embed)]
-#[folder = ".."]
-#[include = "target/site/pkg/*"]
-#[include = "index.html"]
-struct AppAssets;
-
 #[tokio::main]
 async fn main() {
+    // server fnの登録
+    register_explicit::<GetRootDir>();
+
     let args = Args::parse();
     let addr = SocketAddrV4::new(Ipv4Addr::LOCALHOST, args.port);
+
+    let root_dir = resolve_directory(Path::new(&args.dir)).expect("Invalid directory");
 
     let app = Router::new()
         .route("/", get(html_handler))
         .route("/assets/frontend.js", get(js_handler))
-        .route("/assets/frontend_bg.wasm", get(wasm_handler));
+        .route("/assets/frontend_bg.wasm", get(wasm_handler))
+        .route("/api/{*server_fn}", post(server_fn_handler))
+        .with_state(ServerState::new(root_dir));
 
     let listener = tokio::net::TcpListener::bind(addr)
         .await
@@ -46,6 +54,13 @@ struct Args {
     #[arg(short, long, default_value_t = 5000)]
     port: u16,
 }
+
+#[allow(dead_code)]
+#[derive(Embed)]
+#[folder = ".."]
+#[include = "target/site/pkg/*"]
+#[include = "index.html"]
+struct AppAssets;
 
 async fn shutdown_signal() {
     let ctrl_c = async {
@@ -117,5 +132,34 @@ async fn wasm_handler() -> impl IntoResponse {
             .status(StatusCode::NOT_FOUND)
             .body("404 Not Found".into())
             .unwrap(),
+    }
+}
+
+async fn server_fn_handler(
+    State(state): State<ServerState>,
+    req: Request<Body>,
+) -> impl IntoResponse {
+    handle_server_fns_with_context(move || provide_context(state.clone()), req).await
+}
+
+fn resolve_directory(dir: &Path) -> Result<PathBuf, std::io::Error> {
+    let path = if dir.is_absolute() {
+        dir.to_path_buf()
+    } else {
+        std::env::current_dir()?.join(dir)
+    };
+
+    if !path.exists() {
+        Err(std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            format!("Directory does not exist: {}", path.display()),
+        ))
+    } else if !path.is_dir() {
+        Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            format!("Not a directory: {}", path.display()),
+        ))
+    } else {
+        Ok(path.canonicalize()?)
     }
 }

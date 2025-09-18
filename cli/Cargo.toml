@@ -5,8 +5,10 @@ edition = "2024"
 build = "build.rs"
 
 [dependencies]
-axum = "0.8.4"
-clap = { version = "4.5.47", features = ["derive"] }
-rust-embed = { version = "8.7.2", features = ["include-exclude"] }
-serde = { version = "1.0.225", features = ["derive"] }
-tokio = { version = "1.47.1", features = ["full"] }
+api = { path = "../api", features = ["ssr"] }
+axum = { workspace = true }
+clap = { workspace = true }
+leptos = { workspace = true, features = ["ssr", "nightly"] }
+leptos_axum = { workspace = true }
+rust-embed = { workspace = true }
+tokio = { workspace = true }

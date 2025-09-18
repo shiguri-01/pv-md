@@ -1,7 +1,7 @@
 use std::{env, path::PathBuf, process::Command};
 
 fn main() {
-    println!("cargo:rerun-if-changed=../frontend/src/lib.rs");
+    println!("cargo:rerun-if-changed=../frontend/src");
     println!("cargo:rerun-if-changed=../frontend/Cargo.toml");
     println!("cargo:rerun-if-changed=../index.html");
 
