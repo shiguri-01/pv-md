@@ -3,7 +3,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use api::{GetRootDir, server_state::ServerState};
+use api::server_state::ServerState;
 use axum::{
     Router,
     body::Body,
@@ -22,7 +22,8 @@ use tokio::signal;
 #[tokio::main]
 async fn main() {
     // server fnの登録
-    register_explicit::<GetRootDir>();
+    register_explicit::<api::GetRootDir>();
+    register_explicit::<api::GetNavTree>();
 
     let args = Args::parse();
     let addr = SocketAddrV4::new(Ipv4Addr::LOCALHOST, args.port);

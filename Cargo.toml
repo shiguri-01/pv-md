@@ -8,8 +8,10 @@ clap = { version = "4.5.47", features = ["derive"] }
 console_error_panic_hook = "0.1.7"
 leptos = { version = "0.8.8", default-features = false}
 leptos_axum = "0.8.6"
+leptos_router = "0.8.6"
 rust-embed = { version = "8.7.2", features = ["include-exclude"] }
 serde = { version = "1.0.225", features = ["derive"] }
 thaw = { version = "0.5.0-beta", features = ["csr", "nightly"] }
 tokio = { version = "1.47.1", features = ["full"] }
+walkdir = "2.5.0"
 wasm-bindgen = "=0.2.102"

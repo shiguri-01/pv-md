@@ -109,6 +109,7 @@ version = "0.1.0"
 dependencies = [
  "leptos",
  "serde",
+ "walkdir",
 ]
 
 [[package]]
@@ -692,6 +693,7 @@ dependencies = [
  "api",
  "console_error_panic_hook",
  "leptos",
+ "leptos_router",
  "thaw",
  "wasm-bindgen",
 ]

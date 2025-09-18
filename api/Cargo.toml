@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 leptos = { workspace = true, features = ["nightly"] }
 serde = { workspace = true }
+walkdir = { workspace = true }
 
 [features]
 csr = ["leptos/csr"]

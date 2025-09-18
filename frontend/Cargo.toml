@@ -11,5 +11,6 @@ crate-type = ["cdylib", "rlib"]
 api = { path = "../api", features = ["csr"] }
 console_error_panic_hook = { workspace = true }
 leptos = { workspace = true, features = ["csr", "nightly"] }
+leptos_router = { workspace = true, features = ["nightly"] }
 thaw = { workspace = true }
 wasm-bindgen = { workspace = true }
