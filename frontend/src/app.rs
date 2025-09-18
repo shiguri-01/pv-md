@@ -1,4 +1,4 @@
-use api::{ get_root_dir};
+use api::get_root_dir;
 use leptos::prelude::*;
 use thaw::ConfigProvider;
 
@@ -8,11 +8,16 @@ pub fn App() -> impl IntoView {
     view! {
         <ConfigProvider>
             <div>
-                <Suspense fallback=|| view! { <h1>"Loading..."</h1> }>
-                    {move || dir.get().map(|result| match result {
-                        Ok(dir) => view! { <h1>{dir}</h1> }.into_view(),
-                        Err(e) => view! { <h1>{format!("Error: {}", e)}</h1> }.into_view(),
-                    })}
+                <Suspense fallback=|| {
+                    view! { <h1>"Loading..."</h1> }
+                }>
+                    {move || {
+                        dir.get()
+                            .map(|result| match result {
+                                Ok(dir) => view! { <h1>{dir}</h1> }.into_view(),
+                                Err(e) => view! { <h1>{format!("Error: {}", e)}</h1> }.into_view(),
+                            })
+                    }}
                 </Suspense>
                 <p>"Hello, world!"</p>
             </div>

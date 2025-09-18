@@ -1,14 +1,14 @@
 use std::path::Path;
 
 use leptos::{
-    prelude::{use_context, ServerFnError},
+    prelude::{ServerFnError, use_context},
     server,
 };
 
 use crate::server_state::ServerState;
 pub mod server_state;
 
-#[server(GetRootDir, "/api", endpoint="get_root_dir")]
+#[server(GetRootDir, "/api", endpoint = "get_root_dir")]
 pub async fn get_root_dir() -> Result<String, ServerFnError> {
     match use_context::<ServerState>() {
         Some(state) => Ok(normalize_path(state.root_dir())),
@@ -28,5 +28,3 @@ fn normalize_path(path: &Path) -> String {
 
     path_str.replace('\\', "/")
 }
-
-
