@@ -61,7 +61,7 @@ impl NavTree {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum NavTreeDto {
     File {
         name: String,
